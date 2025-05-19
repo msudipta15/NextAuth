@@ -29,7 +29,7 @@ export default function Home() {
         <div>
           <LoginComponent>
             <Button variant={"outline"} size={"lg"}>
-              Sign In
+              Sign in 
             </Button>
           </LoginComponent>
         </div>
