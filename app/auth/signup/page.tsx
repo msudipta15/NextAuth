@@ -1,7 +1,9 @@
-import { SignupForm } from "@/components/auth/signupform";
+import { SignupCardWrapper } from "@/components/auth/signupcard";
 
-export default function Page(){
-    return <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-r from-purple-500 to-purple-900" >
-        <SignupForm/>
+export default function Page() {
+  return (
+    <div className="w-full h-screen bg-gradient-to-r from-purple-500 to-purple-900 flex justify-center items-center ">
+      <SignupCardWrapper />
     </div>
+  );
 }

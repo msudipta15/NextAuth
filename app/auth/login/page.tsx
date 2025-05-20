@@ -1,7 +1,9 @@
-import { SigninForm } from "@/components/auth/signinform";
+import { LoginCardWrapper } from "@/components/auth/logincard";
 
-export default function Page(){
-  return <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-r from-purple-500 to-purple-900" >
-    <SigninForm/>
-  </div>
+export default function Page() {
+  return (
+    <div className="w-full h-screen flex justify-center items-center bg-gradient-to-r from-purple-500 to-purple-900">
+      <LoginCardWrapper />
+    </div>
+  );
 }

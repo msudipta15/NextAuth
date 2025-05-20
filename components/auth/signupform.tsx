@@ -1,77 +1,95 @@
 "use client";
 
-import { useState } from "react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
-import { FaGithub } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+const formSchema = z.object({
+  fullname: z.string().min(2, { message: "Enter your full name" }).max(50),
+  email: z.string().email({ message: "Enter a valid email" }).min(2, {
+    message: "Enter a valid email",
+  }),
+  password: z
+    .string()
+    .min(2, { message: "Password must be more than 2 characters" })
+    .max(10, { message: "Password must be less than 10 characters" }),
+});
 
 export function SignupForm() {
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
-  const [name, setname] = useState("");
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const router = useRouter();
-
-  function handlesubmit() {
-    alert(`email: ${email} name: ${name} password: ${password}`);
+  // 2. Define a submit handler.
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
   }
 
   return (
-    <div className="bg-white flex flex-col gap-6 min-w-[350px] min-h-[400px] max-h-full max-w-full px-8 py-6 rounded-lg  justify-center ">
-      <div className="text-center">
-        <h1 className="text-3xl text-slate-900 font-bold">🔐 Auth</h1>
-      </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="fullname"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter your full name" {...field} />
+              </FormControl>
 
-      <div className="flex flex-col gap-1">
-        <Label>Full Name</Label>
-        <Input
-          onChange={(e) => setname(e.target.value)}
-          placeholder="Enter your name"
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div className="flex flex-col gap-1">
-        <Label>Email</Label>
-        <Input
-          onChange={(e) => setemail(e.target.value)}
-          placeholder="Enter your email"
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="johndoe@example.com" {...field} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div className="flex flex-col gap-1">
-        <Label>Password</Label>
-        <Input
-          onChange={(e) => setpassword(e.target.value)}
-          placeholder="Enter your password"
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder="******" {...field} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div>
-        <Button
-          onClick={() => handlesubmit()}
-          variant={"default"}
-          className="w-full"
-        >
-          sign Up
+        <Button type="submit" className="w-full">
+          Submit
         </Button>
-      </div>
-      <div className=" w-full flex justify-center gap-x-2 ">
-        <Button variant={"outline"} size={"lg"}>
-          <FcGoogle />
-        </Button>
-        <Button variant={"outline"} size={"lg"}>
-          <FaGithub />
-        </Button>
-      </div>
-      <div className="text-center text-gray-700">
-        <span>Already have an account ,</span>
-        <span
-          onClick={() => router.push("/auth/login")}
-          className="text-blue-800 cursor-pointer "
-        >
-          Sign In
-        </span>
-      </div>
-    </div>
+      </form>
+    </Form>
   );
 }

@@ -23,7 +23,7 @@ export default function Home() {
         <p className="text-lg text-white font-Poppins">
           A Simple authentication service
         </p>
-        <div>
+        <div className="flex justify-center gap-2">
           <LoginComponent>
             <Button variant={"outline"} size={"lg"}>
               Sign In
