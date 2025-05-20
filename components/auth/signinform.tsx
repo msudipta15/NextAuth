@@ -14,16 +14,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { LoginSchema } from "@/schemas/loginSchema";
 
-const formSchema = z.object({
-  email: z.string().email({ message: "Enter a valid email" }).min(2, {
-    message: "Enter a valid email",
-  }),
-  password: z
-    .string()
-    .min(2, { message: "Password must be more than 2 characters" })
-    .max(10, { message: "Password must be less than 10 characters" }),
-});
+const formSchema = LoginSchema();
 
 export function LoginForm() {
   // 1. Define your form.
