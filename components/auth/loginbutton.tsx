@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-export function LoginComponent({ children }: any) {
+export function LoginComponent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const onclick = () => {

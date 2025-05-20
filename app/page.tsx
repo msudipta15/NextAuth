@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { buttonVariants } from "@/components/ui/button";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { LoginComponent } from "@/components/auth/loginbutton";
@@ -10,8 +9,6 @@ const font = Poppins({
 });
 
 export default function Home() {
-
-
   return (
     <main className="flex h-screen flex-col items-center justify-center bg-gradient-to-r from-purple-500 to-purple-900">
       <div className="space-y-6 text-center">
