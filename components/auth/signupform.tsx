@@ -8,21 +8,30 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormError,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  FormSuccess,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { SignupSchema } from "@/schemas/signupschema";
+import { useState, useTransition } from "react";
+import { signup } from "@/actions/signup";
 
 const formSchema = SignupSchema();
 
 export function SignupForm() {
+  const [isPending, startTransition] = useTransition();
+  const [error, seterror] = useState<string | undefined>();
+  const [success, setsuccess] = useState<string | undefined>();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      fullname: "",
       email: "",
       password: "",
     },
@@ -30,7 +39,15 @@ export function SignupForm() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    seterror("");
+    setsuccess("");
+
+    startTransition(() => {
+      signup(values).then((data) => {
+        seterror(data.error);
+        setsuccess(data.success);
+      });
+    });
   }
 
   return (
@@ -39,6 +56,7 @@ export function SignupForm() {
         <FormField
           control={form.control}
           name="fullname"
+          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Full Name</FormLabel>
@@ -53,6 +71,7 @@ export function SignupForm() {
         <FormField
           control={form.control}
           name="email"
+          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
@@ -67,6 +86,7 @@ export function SignupForm() {
         <FormField
           control={form.control}
           name="password"
+          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
@@ -78,7 +98,9 @@ export function SignupForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
+        <FormSuccess message={success} />
+        <FormError message={error} />
+        <Button disabled={isPending} type="submit" className="w-full">
           Submit
         </Button>
       </form>
