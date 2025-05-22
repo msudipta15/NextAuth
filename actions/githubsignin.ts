@@ -2,5 +2,5 @@
 import { signIn } from "@/auth";
 
 export async function githubsignin() {
-  await signIn();
+  await signIn("github", { redirectTo: "/user/info" });
 }

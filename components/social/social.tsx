@@ -1,6 +1,8 @@
+"use client";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { Button } from "../ui/button";
+import { githubsignin } from "@/actions/githubsignin";
 
 export function Social() {
   return (
@@ -8,7 +10,12 @@ export function Social() {
       <Button variant={"outline"} size={"lg"} className="w-1/2">
         <FcGoogle />
       </Button>
-      <Button variant={"outline"} size={"lg"} className="w-1/2">
+      <Button
+        onClick={() => githubsignin()}
+        variant={"outline"}
+        size={"lg"}
+        className="w-1/2"
+      >
         <FaGithub />
       </Button>
     </div>
