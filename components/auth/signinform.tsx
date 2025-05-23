@@ -3,31 +3,31 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { signIn } from "next-auth/react"; // Use client-side signIn
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormError,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormSuccess,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LoginSchema } from "@/schemas/loginSchema";
-import { useState, useTransition } from "react";
 import { login } from "@/actions/login";
 
 const formSchema = LoginSchema();
 
 export function LoginForm() {
-  const [isPending, startTransition] = useTransition();
-  const [error, seterror] = useState<string | undefined>();
-  const [success, setsuccess] = useState<string | undefined>();
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 1. Define your form.
+  // Define the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,18 +36,39 @@ export function LoginForm() {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    seterror("");
-    setsuccess("");
+  // Handle form submission
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+    setError(null);
 
-    startTransition(() => {
-      login(values).then((data) => {
-        seterror(data.error);
-        setsuccess(data.success);
+    try {
+      // Call Server Action for validation
+      const result = await login(values);
+
+      if (!result.success) {
+        setError(result.error || "Validation failed.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Perform client-side signIn
+      const signInResult = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false, // Handle redirect manually
       });
-    });
-  }
+
+      if (signInResult?.error) {
+        setError(signInResult.error);
+      } else {
+        router.push("/user/info"); // Redirect on success
+      }
+    } catch {
+      setError("An error occurred during login.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -55,14 +76,12 @@ export function LoginForm() {
         <FormField
           control={form.control}
           name="email"
-          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input placeholder="johndoe@example.com" {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -70,23 +89,19 @@ export function LoginForm() {
         <FormField
           control={form.control}
           name="password"
-          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="******" {...field} />
+                <Input type="password" placeholder="******" {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormSuccess message={success} />
-        <FormError message={error} />
-
-        <Button disabled={isPending} type="submit" className="w-full">
-          Submit
+        {error && <p className="text-red-500">{error}</p>}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
       </form>
     </Form>

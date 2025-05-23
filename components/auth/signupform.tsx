@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { SignupSchema } from "@/schemas/signupschema";
 import { useState, useTransition } from "react";
 import { signup } from "@/actions/signup";
+import { redirect } from "next/navigation";
 
 const formSchema = SignupSchema();
 
@@ -45,7 +46,9 @@ export function SignupForm() {
     startTransition(() => {
       signup(values).then((data) => {
         seterror(data.error);
-        setsuccess(data.success);
+        if (data.success) {
+          redirect("/auth/login");
+        }
       });
     });
   }
