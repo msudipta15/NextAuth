@@ -4,9 +4,15 @@ import { auth } from "@/auth";
 
 import Image from "next/image";
 import { LogoutButton } from "../auth/logout";
+import { DeleteComponent } from "../auth/deleteaccount";
+import { redirect } from "next/navigation";
 
 export async function UserCard() {
   const session = await auth();
+
+  if (!session || !session.user) {
+    redirect("/");
+  }
 
   return (
     <div>
@@ -29,6 +35,9 @@ export async function UserCard() {
       </div>
       <div className="p-4">
         <LogoutButton />
+      </div>
+      <div>
+        <DeleteComponent session={session} />
       </div>
     </div>
   );

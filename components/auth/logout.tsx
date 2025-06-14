@@ -6,7 +6,7 @@ import { logout } from "@/actions/logout";
 export function LogoutButton() {
   return (
     <div className="flex justify-center">
-      <Button variant={"default"} size={"lg"} onClick={() => logout()}>
+      <Button variant={"default"} onClick={() => logout()}>
         Log out
       </Button>
     </div>
